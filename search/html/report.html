@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor.js Example</title>
+    <style>
+        .__black {
+            background-color: black;
+        }
+    </style>
+  <script src="../scripts/toolfunction.js"></script>
+  <script src="../scripts/readsome.js"></script>
+  <script src="../scripts/onload.js"></script>
+  <script src="../scripts/oauth.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <div>
+        <nav class="navbar bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white">Report Page</a>
+                <div>
+                    <a href="/search/html/start.html" class="navbar-brand text-white">Home</a>
+                    <a href="/search/html/report.html" class="navbar-brand text-white">Report</a>
+                    <a class="navbar-brand text-white">Username</a>
+                    <a class="navbar-brand text-white">LogOut</a>
+                </div>
+            </div>
+        </nav>
+        <!-- Your content goes here -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Editor.js Container -->
+                    <div id="editorjs"></div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Buttons -->
+                    <div class="text-center mt-3">
+                        <button type="button" id="searchButton" onclick=""></button>
+                        <button id="loadDataButton" class="loadDataButton btn btn-success">Load Data</button>
+                        <button id="saveButton" class="btn btn-primary">Save</button>
+                        <button id="loadDataButton" class="btn btn-secondary">Dispatch</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Editor.js Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <!-- Include Editor.js Script -->
+    <!-- <script src="../scripts/editorjs.mjs"></script> -->
+    <script>
+        console.log(window.location.search)
+        document.addEventListener('DOMContentLoaded', function () {
+            var editor = new EditorJS({
+                holder: 'editorjs',
+                tools: {
+                    header: Header,
+                    list: List,
+                    // Add more tools as needed
+                },
+            })
+            document.getElementById('loadDataButton').addEventListener('click', function () {
+                console.log('load clicked')
+                readAllJson(window.location.search, true)
+                console.log('reportData: ', reportData)
+                editor.render({
+                    blocks: [
+                        {
+                            type: 'header',
+                            data: {
+                                text: 'REPORT TITLE COMES HERE',
+                                level: 2
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'Name:      Number:',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'Age:      Gender:    Referring Doctor:',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'MODALITY+STUDY',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'CLINICAL HISTORY',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'COMPARISSON',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'FINDINGS',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'CONCLUSION',
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'RADIOLOGIST+DATE+CONTACT',
+                            }
+                        }
+                    ]
+                })
+        });
+
+        setTimeout(() => {
+            document.getElementById('loadDataButton').click()
+        }, 10000)
+
+            // Your button or trigger to save and send data to the API
+            document.getElementById('saveButton').addEventListener('click', function () {
+                editor.save().then(function (outputData) {
+                    // Output data is a JSON object containing the content
+                    console.log('Editor.js output:', outputData);
+
+                    // Send the data to your API (replace 'your-api-endpoint' with the actual endpoint)
+                    fetch('https://your-api-endpoint.com', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(outputData),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('API response:', data);
+                            // Handle API response as needed
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Handle errors
+                        });
+                });
+            });
+        });    
+    </script>
+
+</body>
+
+</html>
